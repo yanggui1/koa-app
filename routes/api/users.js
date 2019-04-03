@@ -75,4 +75,37 @@ router.post("/register", async ctx => {
 });
 
 
+
+/**
+ * @route POST api/users/login
+ * @description 登陆接口地址 返回token
+ * @access 接口是公开的
+ */
+router.post("/login", async ctx => {
+    // 查询
+    // ctx.set({"Content-Type": "application/json"});
+
+    const findResult = await User.find({email: ctx.request.body.email});
+    const user = findResult[0];
+    const password = ctx.request.body.password;
+    // 判断用户是否存在
+    if (findResult.length == 0) {
+        ctx.status = 404;
+        ctx.body = {email: "用户不存在!"};
+    }else {
+        // 若用户存在验证密码
+        var result = await bcrypt.compareSync(password, user.password);
+        if(result) {
+            // 返回token
+            ctx.status = 200;
+            ctx.body = {success: true};
+        }else {
+            ctx.status = 400;
+            ctx.body = {password: "密码错误!"};
+        }
+    }
+
+});
+
+
 module.exports = router.routes();
