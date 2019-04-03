@@ -19,6 +19,7 @@
   "homepage": "https://github.com/yanggui1/koa-app#readme",
   "dependencies": {
     "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "mongoose": "^5.4.20"
   }
