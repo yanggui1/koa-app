@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/yanggui1/koa-app#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "gravatar": "^1.8.0",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
