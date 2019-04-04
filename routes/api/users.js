@@ -4,6 +4,8 @@ const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const gravatar = require("gravatar");
 const tools = require("../../config/tools");
+const jwt = require("jsonwebtoken");
+const keys = require("../../config/keys");
 
 /**
  * @route GET api/users/test
@@ -97,14 +99,27 @@ router.post("/login", async ctx => {
         var result = await bcrypt.compareSync(password, user.password);
         if(result) {
             // 返回token
+            const payload = {id: user.id, name: user.name, avatar: user.avatar};
+            const token = jwt.sign(payload,keys.secretOrKeys,{expiresIn: 3600});
+
             ctx.status = 200;
-            ctx.body = {success: true};
+            ctx.body = {success: true,token: "Bearer "+token};
         }else {
             ctx.status = 400;
             ctx.body = {password: "密码错误!"};
         }
     }
 
+});
+
+
+/**
+ * @route GET api/users/current
+ * @description 用户信息接口地址 返回用户信息
+ * @access 接口是私密的
+ */
+router.get("/current", "token验证", async ctx => {
+    ctx.body = {success: true};
 });
 
 
