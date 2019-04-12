@@ -25,6 +25,6 @@ module.exports = passport => {
     //         // });
     //     })
     // );
-    console.log(opts)
+    // console.log(passport)
 
 };

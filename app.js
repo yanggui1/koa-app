@@ -33,6 +33,7 @@ router.get("/", async ctx => {
     ctx.body = {msg: "hello koa !"}
 })
 
+
 // 配置路由
 app.use(router.routes()).use(router.allowedMethods());
 const port = process.env.PORT || 5000;
