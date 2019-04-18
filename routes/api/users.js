@@ -6,6 +6,11 @@ const gravatar = require("gravatar");
 const tools = require("../../config/tools");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
+const passport = require("koa-passport");
+
+// 引入input验证
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
 
 /**
  * @route GET api/users/test
@@ -27,6 +32,15 @@ router.get("/test", async ctx => {
 
 router.post("/register", async ctx => {
     // console.log(ctx.request.body);
+
+    const {errors,isValid} = validateRegisterInput(ctx.request.body);
+
+    // 判断验证是否通过
+    if (!isValid){
+        ctx.status = 400;
+        ctx.body = errors;
+        return;
+    }
 
     // 存储到数据库
     const findResult = await User.find({email: ctx.request.body.email});
@@ -86,6 +100,14 @@ router.post("/register", async ctx => {
 router.post("/login", async ctx => {
     // 查询
     // ctx.set({"Content-Type": "application/json"});
+    const {errors,isValid} = validateLoginInput(ctx.request.body);
+
+    // 判断验证是否通过
+    if (!isValid){
+        ctx.status = 400;
+        ctx.body = errors;
+        return;
+    }
 
     const findResult = await User.find({email: ctx.request.body.email});
     const user = findResult[0];
@@ -118,9 +140,18 @@ router.post("/login", async ctx => {
  * @description 用户信息接口地址 返回用户信息
  * @access 接口是私密的
  */
-router.get("/current", "token验证", async ctx => {
-    ctx.body = {success: true};
-});
+router.get(
+    "/current", 
+    passport.authenticate("jwt", {session: false}), 
+    async ctx => {
+        ctx.body = {
+            id: ctx.state.user.id,
+            name: ctx.state.user.name,
+            email: ctx.state.user.email,
+            avatar: ctx.state.user.avatar
+        };
+    }
+);
 
 
 module.exports = router.routes();
